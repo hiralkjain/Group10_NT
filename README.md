@@ -131,3 +131,10 @@ npm run dev
 | `GET` | `/api/analytics/endpoints` | Top endpoints + error rates | `Admin` |
 | `POST` | `/api/auth/login` | Department login | `None` |
 | `PATCH` | `/api/alerts/{id}/resolve` | Mark alert resolved | `JWT` |
+| `GET` | `/api/analytics/asset-types` | Asset type distribution (Pie) | `JWT` |
+| `GET` | `/api/analytics/resolutions` | Dept resolution efficiency | `Admin` |
+| `POST` | `/api/chat` | AI log analysis assistant | `JWT` |
+| `GET` | `/api/search/{query}` | Correlation ID tracing | `JWT` |
+| `GET` | `/health` | System health check | `None` |
+| `GET` | `/api/admin/users` | Active user sessions | `Admin` |
+| `GET` | `/api/admin/stream` | Global log stream | `Admin` |
