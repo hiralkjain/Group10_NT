@@ -1,32 +1,24 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
     try {
-      const response = await api.post('/auth/login', { email, password })
-      const token = response.data?.access_token
-      if (token) {
-        login(token)
-        navigate('/')
-      } else {
-        setError('Login failed. No token received.')
-      }
+      await api.post('/auth/register', { email, password })
+      navigate('/login')
     } catch (err: any) {
       const message =
-        err?.response?.data?.detail || 'Login failed. Please check credentials.'
+        err?.response?.data?.detail || 'Registration failed. Please try again.'
       setError(message)
     } finally {
       setLoading(false)
@@ -36,7 +28,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center">Register</h2>
         {error && (
           <p className="mb-4 text-red-600 text-sm text-center">{error}</p>
         )}
@@ -70,13 +62,13 @@ const Login = () => {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none disabled:opacity-60"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
           </Link>
         </p>
       </div>
@@ -84,4 +76,5 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Register
+

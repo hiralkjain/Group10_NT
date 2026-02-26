@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+from app.aggregation import aggregate_by_level, aggregate_by_service
+from app.auth_routes import router as auth_router
+from app.filters import apply_filters
 from app.loader import load_logs
 from app.storage import logs_storage
 from app.models import LogFilterRequest
-from app.filters import apply_filters
-from app.aggregation import aggregate_by_level, aggregate_by_service
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from app.chatbot import ask_chatbot
 
 app = FastAPI(title="Log Monitoring System")
@@ -18,33 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.on_event("startup")
-def startup_event():
-    load_logs("logs/application.log")
+app.include_router(auth_router)
 
-
-@app.get("/")
-def root():
-    return {"message": "Log Monitoring System Running"}
-
-
-from fastapi import FastAPI
-from app.loader import load_logs
-from app.storage import logs_storage
-from app.models import LogFilterRequest
-from app.filters import apply_filters
-from app.aggregation import aggregate_by_level, aggregate_by_service
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI(title="Log Monitoring System")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React dev server
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 @app.on_event("startup")
 def startup_event():
