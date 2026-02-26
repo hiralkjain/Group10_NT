@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from datetime import datetime
 class Log(BaseModel):
@@ -23,6 +23,31 @@ class LogFilterRequest(BaseModel):
     start_datetime: Optional[datetime] = None
     end_datetime: Optional[datetime] = None
 
+
+class UserBase(BaseModel):
+    email: EmailStr
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class UserLogin(UserBase):
+    password: str
+
+
+class UserInDB(UserBase):
+    id: str
+    hashed_password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    email: Optional[EmailStr] = None
 from pydantic import BaseModel
 from typing import List, Optional
 
