@@ -1,87 +1,90 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import api from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
+import React, { useState } from "react";
+import { useAuth, DeptName } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const { login } = useAuth()
+export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [dept, setDept] = useState<DeptName>("Admin (All Access)");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-    try {
-      const response = await api.post('/auth/login', { email, password })
-      const token = response.data?.access_token
-      if (token) {
-        login(token)
-        navigate('/')
-      } else {
-        setError('Login failed. No token received.')
-      }
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.detail || 'Login failed. Please check credentials.'
-      setError(message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    login(username, dept);
+    navigate("/");
+  };
+
+  const inputStyles = `
+    w-full p-3 text-sm rounded-xl outline-none transition-all border
+    bg-white text-slate-900 border-slate-200
+    dark:bg-slate-900 dark:border-white/10 dark:text-white
+    focus:ring-2 focus:ring-blue-500
+  `;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
-        {error && (
-          <p className="mb-4 text-red-600 text-sm text-center">{error}</p>
-        )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring"
-            />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-black transition-colors duration-300">
+      <div className="w-full max-w-[320px] sm:max-w-sm space-y-10">
+        
+        {/* Header Section */}
+        <div className="text-center space-y-1">
+          <h1 className="text-4xl font-black tracking-tighter uppercase text-slate-900 dark:text-white">
+            Logs
+          </h1>
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">
+            Secure Access Portal
+          </p>
+        </div>
+
+        {/* Form Section */}
+        <form onSubmit={handleAuth} className="space-y-4">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-black uppercase text-slate-500 mb-1.5 ml-1">Username</label>
+              <input 
+                required
+                className={inputStyles}
+                placeholder="Admin or Dept ID"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+
+            <div className="relative">
+              <label className="block text-[10px] font-black uppercase text-slate-500 mb-1.5 ml-1">Access Level</label>
+              <select 
+                className={`${inputStyles} appearance-none cursor-pointer pr-10`}
+                value={dept}
+                onChange={(e) => setDept(e.target.value as DeptName)}
+              >
+                <option className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" value="Admin (All Access)">Admin (All Access)</option>
+                <option className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" value="Infrastructure & DB">Infrastructure & DB</option>
+                <option className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" value="Business Logic">Business Logic</option>
+                <option className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" value="Access & Security">Access & Security</option>
+              </select>
+              
+              {/* Custom dropdown arrow icon */}
+              <div className="pointer-events-none absolute bottom-[14px] right-3 flex items-center text-slate-400">
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring"
-            />
-          </div>
-          <button
+
+          <button 
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none disabled:opacity-60"
+            className="w-full py-3.5 mt-4 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest rounded-xl transition-all active:scale-[0.97] text-xs shadow-xl shadow-blue-600/20"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            Authorize Session
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-        </p>
+
+        <div className="text-center">
+          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+            Identity Verified • LogSentinel v2.0
+          </p>
+        </div>
       </div>
     </div>
-  )
+  );
 }
-
-export default Login
