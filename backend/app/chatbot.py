@@ -32,9 +32,7 @@ def build_context_from_logs(question: str):
         f"{log.get('message')}"
         for log in matched_logs
     )
-
     return context
-
 
 def ask_chatbot(question: str):
 

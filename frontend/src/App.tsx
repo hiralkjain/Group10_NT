@@ -1,52 +1,38 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import LogFiltersPage from "./pages/LogFiltersPage";
-import { LogProvider } from "./context/LogContext";
-import AlertsCenter from "./pages/AlertDashboard";
-import LogExplorer from "./pages/LogExplorer";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AlertsCenter from "./pages/AlertDashboard"; 
+import UserManagementPage from "./pages/UserManagement";
 import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import AlertsDashboard from "./pages/AlertDashboard";
+import { LogProvider } from "./context/LogContext"; 
+import { AuthProvider, useAuth } from "./context/AuthContext"; 
+import ResolutionHub from "./pages/ResolutionHub";
+
+// A wrapper to protect routes
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  return <Layout>{children}</Layout>;
+};
+
 function App() {
   return (
-    <LogProvider>
-      <Layout>
+    <AuthProvider>
+      <LogProvider>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/filters" element={<LogFiltersPage />} />
-          <Route path="/alerts" element={<AlertsDashboard />} />
-          <Route path="/logs" element={<LogExplorer />} />
-          {/* Requirement #4: Displaying alerts and why they fired */}
-          <Route path="/alerts-dashboard" element={<AlertsCenter />} />
+          <Route path="/login" element={<Login />} />
+          
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/filters" element={<ProtectedRoute><LogFiltersPage /></ProtectedRoute>} />
+          <Route path="/alerts" element={<ProtectedRoute><AlertsCenter /></ProtectedRoute>} />
+          <Route path="/resolve" element={<ProtectedRoute><ResolutionHub /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute><UserManagementPage /></ProtectedRoute>} />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </Layout>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <Dashboard />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/filters"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <LogFiltersPage />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </LogProvider>
+      </LogProvider>
+    </AuthProvider>
   );
 }
 
