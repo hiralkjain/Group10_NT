@@ -65,7 +65,7 @@ export default function Sidebar() {
         <Activity className="text-blue-500 shrink-0" />
         {!isCollapsed && (
           <span className="text-xl font-black tracking-tight animate-in fade-in duration-500">
-            LogSentinel
+            Logs
           </span>
         )}
       </div>
