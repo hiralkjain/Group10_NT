@@ -1,12 +1,18 @@
-from pymongo import MongoClient
 import os
+
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-client = MongoClient(MONGO_URI)
-db = client["saas_logs"]
+MONGODB_URI = os.getenv("MONGODB_URI")
+MONGODB_DB = os.getenv("MONGODB_DB", "log_monitoring")
 
-projects_collection = db["projects"]
-files_collection = db["files"]
+if not MONGODB_URI:
+    raise ValueError("MONGODB_URI is not set")
+
+client = MongoClient(MONGODB_URI)
+db = client[MONGODB_DB]
+
+users_collection = db["users"]
+
