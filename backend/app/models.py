@@ -48,3 +48,36 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[EmailStr] = None
+from pydantic import BaseModel
+from typing import List, Optional
+
+class LogLine(BaseModel):
+    timestamp: str
+    line: str
+    level: str
+
+class Alert(BaseModel):
+    message: str
+    severity: str
+    timestamp: str
+
+class ProjectStats(BaseModel):
+    projectId: str
+    latestLogs: List[LogLine]
+    alerts: List[Alert]
+
+class GraphDataPoint(BaseModel):
+    timestamp: str
+    errorCount: int
+    warnCount: int
+    infoCount: int
+
+class ChatMessage(BaseModel):
+    role: str  # "user" or "assistant"
+    content: str
+
+class ChatRequest(BaseModel):
+    messages: List[ChatMessage]
+
+class ChatResponse(BaseModel):
+    response: str
