@@ -1,67 +1,3 @@
-// import {
-//   BarChart,
-//   Bar,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   ResponsiveContainer,
-// } from "recharts";
-
-// const data = [
-//   { date: "Feb 20", critical: 2 },
-//   { date: "Feb 21", critical: 5 },
-//   { date: "Feb 22", critical: 1 },
-//   { date: "Feb 23", critical: 8 },
-//   { date: "Feb 24", critical: 3 },
-// ];
-
-// export default function AlertsChart() {
-//   return (
-//     <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
-//       <h2 className="text-lg text-white mb-4">Alerts Timeline</h2>
-
-//       <ResponsiveContainer width="100%" height={250}>
-//         <BarChart data={data}>
-//           <XAxis dataKey="date" stroke="#94a3b8" />
-//           <YAxis stroke="#94a3b8" />
-//           <Tooltip />
-//           <Bar dataKey="critical" fill="#ef4444" />
-//         </BarChart>
-//       </ResponsiveContainer>
-//     </div>
-//   );
-// }
-
-// export default function AlertsChart() {
-
-//   return (
-//     <div
-//       className="
-//       bg-white dark:bg-gray-900
-//       rounded-2xl shadow-lg
-//       border border-gray-200 dark:border-gray-800
-//       p-6 transition-colors duration-300
-//     "
-//     >
-//       <h3
-//         className="text-lg font-semibold mb-4
-//                      text-gray-800 dark:text-white"
-//       >
-//         Alerts Overview
-//       </h3>
-
-//       <div
-//         className="
-//         h-40 flex items-center justify-center
-//         text-gray-400
-//       "
-//       >
-//         Chart Placeholder
-//       </div>
-//     </div>
-//   );
-// }
-
 import {
   BarChart,
   Bar,
@@ -81,48 +17,75 @@ const data = [
 ];
 
 export default function AlertsChart() {
+  // Using a consistent slate color for grid and axis lines that works in both modes
+  const axisStroke = "#64748b"; 
+
   return (
     <div
       className="
-      bg-white dark:bg-gray-900
-      rounded-2xl shadow-lg
-      border border-gray-200 dark:border-gray-800
-      p-6 transition-colors duration-300
+      bg-white dark:bg-black
+      rounded-[2rem] shadow-sm
+      border border-gray-200 dark:border-white/10
+      p-4 sm:p-6 transition-all duration-300
     "
     >
-      <h3
-        className="text-lg font-semibold mb-4
-                   text-gray-800 dark:text-white"
-      >
-        Alerts Overview
-      </h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-sm font-black uppercase tracking-widest text-gray-500 dark:text-slate-400">
+          Alerts Overview
+        </h3>
+        <div className="flex gap-2">
+           <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+           <span className="text-[10px] font-bold text-gray-400 uppercase">Live Feed</span>
+        </div>
+      </div>
 
-      <div className="h-64">
+      <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+          <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            {/* Horizontal grid lines for better readability */}
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              vertical={false} 
+              stroke={axisStroke} 
+              opacity={0.1} 
+            />
 
             <XAxis
               dataKey="date"
-              stroke="currentColor"
-              className="text-gray-500 dark:text-gray-400"
+              stroke={axisStroke}
+              fontSize={11}
+              tickLine={false}
+              axisLine={false}
+              dy={10}
             />
 
             <YAxis
-              stroke="currentColor"
-              className="text-gray-500 dark:text-gray-400"
+              stroke={axisStroke}
+              fontSize={11}
+              tickLine={false}
+              axisLine={false}
+              dx={-5}
             />
 
             <Tooltip
+              cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
               contentStyle={{
-                backgroundColor: "#1f2937",
-                borderRadius: "8px",
-                border: "none",
+                backgroundColor: "#000",
+                borderRadius: "12px",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: "bold"
               }}
-              labelStyle={{ color: "#fff" }}
+              itemStyle={{ color: "#ef4444" }}
             />
 
-            <Bar dataKey="critical" fill="#ef4444" radius={[6, 6, 0, 0]} />
+            <Bar 
+              dataKey="critical" 
+              fill="#ef4444" 
+              radius={[4, 4, 0, 0]} 
+              barSize={132}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
