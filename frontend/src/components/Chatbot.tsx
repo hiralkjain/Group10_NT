@@ -2,23 +2,43 @@ import { useState } from "react"
 import { askChatbot } from "../api/chatApi"
 import { motion, AnimatePresence } from "framer-motion"
 
+interface Message {
+  role: "user" | "ai"
+  content: string
+}
+
 const Chatbot = () => {
   const [open, setOpen] = useState(false)
   const [question, setQuestion] = useState("")
   const [loading, setLoading] = useState(false)
-  const [answer, setAnswer] = useState("")
+  const [messages, setMessages] = useState<Message[]>([])
 
   const handleAsk = async () => {
     if (!question.trim()) return
+
+    const userMessage: Message = {
+      role: "user",
+      content: question
+    }
+
+    setMessages(prev => [...prev, userMessage])
+    setQuestion("")
     setLoading(true)
-    const res = await askChatbot(question)
-    setAnswer(res)
+
+    const response = await askChatbot(question)
+
+    const aiMessage: Message = {
+      role: "ai",
+      content: cleanResponse(response)
+    }
+
+    setMessages(prev => [...prev, aiMessage])
     setLoading(false)
   }
 
   return (
     <>
-      {/* Floating Button Bottom Right */}
+      {/* Floating Button */}
       <div
         className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg cursor-pointer transition"
         onClick={() => setOpen(true)}
@@ -29,7 +49,6 @@ const Chatbot = () => {
       <AnimatePresence>
         {open && (
           <>
-            {/* Dark overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.4 }}
@@ -38,12 +57,10 @@ const Chatbot = () => {
               onClick={() => setOpen(false)}
             />
 
-            {/* Center Modal */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.2 }}
               className="fixed inset-0 flex items-center justify-center z-50"
             >
               <div className="w-[95%] md:w-[600px] h-[80%] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
@@ -61,18 +78,33 @@ const Chatbot = () => {
                   </button>
                 </div>
 
-                {/* Chat Area */}
+                {/* Messages */}
                 <div className="flex-1 p-4 overflow-y-auto space-y-4">
 
-                  {loading && (
-                    <div className="bg-blue-600 animate-pulse">
-                      Analyzing logs...
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${
+                        msg.role === "user"
+                          ? "justify-end"
+                          : "justify-start"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[75%] px-4 py-2 rounded-xl text-sm ${
+                          msg.role === "user"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 text-gray-800 border"
+                        }`}
+                      >
+                        {formatAIMessage(msg.content)}
+                      </div>
                     </div>
-                  )}
+                  ))}
 
-                  {answer && (
-                    <div className="bg-gray-50 p-4 rounded-lg border">
-                      {formatAnswer(answer)}
+                  {loading && (
+                    <div className="text-blue-600 animate-pulse text-sm">
+                      Thinking...
                     </div>
                   )}
                 </div>
@@ -83,14 +115,14 @@ const Chatbot = () => {
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ask about errors, time range, services..."
+                    placeholder="Ask about logs..."
                     className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     onClick={handleAsk}
                     className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
                   >
-                    Ask
+                    Send
                   </button>
                 </div>
               </div>
@@ -104,32 +136,37 @@ const Chatbot = () => {
 
 export default Chatbot
 
+/* -------- Clean markdown stars -------- */
 
-/* ---------- Format Response ---------- */
+function cleanResponse(text: string) {
+  return text.replace(/\*\*/g, "")
+}
 
-function formatAnswer(answer: string) {
-  const lines = answer.split("\n")
+/* -------- Better formatting -------- */
+
+function formatAIMessage(text: string) {
+  const lines = text.split("\n")
 
   return (
-    <div className="space-y-2 text-sm">
-      {lines.map((line, index) => {
-        if (line.includes("Error") || line.includes("Failed")) {
+    <div className="space-y-2">
+      {lines.map((line, i) => {
+        if (line.includes("ERROR") || line.includes("Failed")) {
           return (
-            <div key={index} className="text-red-600 font-medium">
+            <div key={i} className="text-red-600 font-medium">
               {line}
             </div>
           )
         }
 
-        if (line.includes("Warning")) {
+        if (line.includes("WARNING")) {
           return (
-            <div key={index} className="text-yellow-600 font-medium">
+            <div key={i} className="text-yellow-600 font-medium">
               {line}
             </div>
           )
         }
 
-        return <div key={index}>{line}</div>
+        return <div key={i}>{line}</div>
       })}
     </div>
   )
