@@ -3,7 +3,7 @@ from app.loader import load_logs
 from app.storage import logs_storage
 from app.models import LogFilterRequest
 from app.filters import apply_filters
-from app.aggregation import aggregate_by_level, aggregate_by_logger
+from app.aggregation import aggregate_by_level, aggregate_by_service
 
 app = FastAPI(title="Log Monitoring System")
 
@@ -26,7 +26,7 @@ def filter_logs(filter_req: LogFilterRequest):
         "total_logs": len(logs_storage),
         "matched_logs": len(filtered),
         "level_distribution": aggregate_by_level(filtered),
-        "logger_distribution": aggregate_by_logger(filtered),
+        "service_distribution": aggregate_by_service(filtered),
         "results": filtered
     }
 

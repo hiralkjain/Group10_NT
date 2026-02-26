@@ -1,15 +1,15 @@
 from pydantic import BaseModel
-from datetime import datetime
 from typing import List, Optional
-
-
+from datetime import datetime
 class Log(BaseModel):
-    timestamp: datetime
+    timestamp: str
     level: str
-    pid: int
-    thread: str
-    logger: str
+    service: str
     message: str
+    severity_score: int
+    error_flag: bool
+    message_length: int
+    keywords: List[str]
 
 
 class LogFilterRequest(BaseModel):
