@@ -8,6 +8,7 @@ import Login from "./pages/auth/Login";
 import { LogProvider } from "./context/LogContext"; 
 import { AuthProvider, useAuth } from "./context/AuthContext"; 
 import ResolutionHub from "./pages/ResolutionHub";
+import LogExplorer from "./pages/LogExplorer";
 
 // A wrapper to protect routes
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/alerts" element={<ProtectedRoute><AlertsCenter /></ProtectedRoute>} />
           <Route path="/resolve" element={<ProtectedRoute><ResolutionHub /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><UserManagementPage /></ProtectedRoute>} />
+          <Route path="/log" element={<ProtectedRoute><LogExplorer /></ProtectedRoute>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

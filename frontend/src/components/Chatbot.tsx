@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { askChatbot } from "../api/chatApi"
 import { motion, AnimatePresence } from "framer-motion"
+import { MessageSquare } from "lucide-react"
 
 interface Message {
   role: "user" | "ai"
@@ -43,7 +44,7 @@ const Chatbot = () => {
         className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg cursor-pointer transition"
         onClick={() => setOpen(true)}
       >
-        💬
+        <MessageSquare size={24} />
       </div>
 
       <AnimatePresence>

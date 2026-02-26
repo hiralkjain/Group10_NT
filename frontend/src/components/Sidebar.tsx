@@ -45,7 +45,7 @@ export default function Sidebar() {
       { name: "User Management", path: "/users", icon: Users },
       { name: "Resolution Hub", path: "/resolve", icon: CheckCircle2 },
     ] : []),
-    { name: "Alert Rules", path: "/rules", icon: Settings },
+    { name: "Log", path: "/log", icon: Settings },
   ];
 
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
