@@ -101,6 +101,7 @@ logs/
 Node.js v18+          # npm install
 Python 3.9+           # venv + pip
 MongoDB               # Local or Atlas (MONGO_URI)
+```
 
 ### 2. **Backend Setup**
 ```bash
@@ -115,12 +116,27 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 2. **Frontend Setup**
+### 3. **Frontend Setup**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
+## 4. **LOG Setup**
+```
+cd model2
+python main.py
+```
+
+## Quick Start (Windows)
+
+1. Clone the repository
+2. Open the project folder
+3. Double click `run_sentinel.bat`
+4. Open browser at:
+   - Frontend: http://localhost:5173
+   - Backend Docs: http://localhost:8000/docs
 
 ## 📊 API Endpoints
 
