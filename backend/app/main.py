@@ -5,6 +5,8 @@ from app.models import LogFilterRequest
 from app.filters import apply_filters
 from app.aggregation import aggregate_by_level, aggregate_by_service
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from app.chatbot import ask_chatbot
 
 app = FastAPI(title="Log Monitoring System")
 
@@ -69,3 +71,12 @@ def filter_logs(filter_req: LogFilterRequest):
 @app.get("/logs/count")
 def get_log_count():
     return {"count": len(logs_storage)}
+
+class ChatRequest(BaseModel):
+    question: str
+
+
+@app.post("/chat")
+def chat(req: ChatRequest):
+    answer = ask_chatbot(req.question)
+    return {"answer": answer}
