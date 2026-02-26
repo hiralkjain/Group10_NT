@@ -20,3 +20,5 @@ class LogFilterRequest(BaseModel):
     from_time: Optional[datetime] = None
     to_time: Optional[datetime] = None
     last_minutes: Optional[int] = None
+    start_datetime: Optional[datetime] = None
+    end_datetime: Optional[datetime] = None
