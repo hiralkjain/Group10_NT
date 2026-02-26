@@ -26,3 +26,7 @@ backend/.env
 #Frontend
 frontend/node_modules/
 frontend/dist/
+
+model2/venv/
+model2/__pycache__/
+model2/.env
