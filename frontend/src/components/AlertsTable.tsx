@@ -194,7 +194,7 @@ export default function AlertsTable() {
   const fetchAlerts = async () => {
     try {
       // Ensure this matches the port in your main.py (8001)
-      const response = await fetch("http://127.0.0.1:8001/alerts");
+      const response = await fetch("http://127.0.0.1:8002/alerts");
       if (!response.ok) throw new Error("Server Error");
 
       const data = await response.json();

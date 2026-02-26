@@ -114,7 +114,7 @@ export default function LogExplorer() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8001/raw-logs");
+      const response = await fetch("http://127.0.0.1:8002/raw-logs");
 
       // If endpoint doesn't exist yet, response.ok will be false
       if (!response.ok) {
