@@ -25,4 +25,8 @@ export default function AlertsDashboard() {
       </div>
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a83c2ae47578322a3bf8a94042c681abe497d5c2

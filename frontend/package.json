@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "axios": "^1.13.5",
+<<<<<<< HEAD
     "framer-motion": "^12.34.3",
+=======
+>>>>>>> a83c2ae47578322a3bf8a94042c681abe497d5c2
     "lucide-react": "^0.575.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

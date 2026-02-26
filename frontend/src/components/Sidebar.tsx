@@ -1,83 +1,53 @@
-// import { Bell, BarChart2, Settings } from "lucide-react";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { LayoutDashboard, FileText, Bell, Settings, Activity } from "lucide-react";
 
-// export default function Sidebar() {
-//   return (
-//     <div className="w-64 h-screen bg-slate-950 border-r border-slate-800 p-6">
-//       <h1 className="text-2xl font-bold text-white mb-10">🚀 AlertX</h1>
-
-//       <nav className="space-y-4 text-gray-400">
-//         <div className="flex items-center gap-3 hover:text-white cursor-pointer">
-//           <BarChart2 size={18} /> Overview
-//         </div>
-
-//         <div className="flex items-center gap-3 text-blue-400 bg-slate-800 p-2 rounded-lg">
-//           <Bell size={18} /> Alerts
-//         </div>
-
-//         <div className="flex items-center gap-3 hover:text-white cursor-pointer">
-//           <Settings size={18} /> Settings
-//         </div>
-//       </nav>
-//     </div>
-//   );
-// }
-
-import { Bell, BarChart2, Settings } from "lucide-react";
+const menuItems = [
+  { name: "Dashboard", path: "/", icon: LayoutDashboard },
+  { name: "Log Explorer", path: "/filters", icon: FileText },
+  { name: "Alerts Center", path: "/alerts", icon: Bell },
+  { name: "Alert Rules", path: "/rules", icon: Settings },
+];
 
 export default function Sidebar() {
+  const location = useLocation();
+
   return (
-    <div
-      className="
-      w-64 min-h-screen p-6
-      bg-white dark:bg-gray-900
-      border-r border-gray-200 dark:border-gray-800
-      transition-colors duration-300
-    "
-    >
-      <h1
-        className="text-2xl font-bold mb-10
-                     text-gray-800 dark:text-white"
-      >
-        🚀 AlertX
-      </h1>
+    <div className="w-64 bg-slate-900 text-white flex flex-col">
+      <div className="p-6 flex items-center gap-3 border-b border-slate-800">
+        <Activity className="text-blue-400" />
+        <span className="text-xl font-bold tracking-tight">Dashboard</span>
+      </div>
 
-      <nav className="space-y-4">
-        <div
-          className="
-          flex items-center gap-3 cursor-pointer
-          text-gray-600 dark:text-gray-400
-          hover:text-blue-600 dark:hover:text-blue-400
-          transition
-        "
-        >
-          <BarChart2 size={18} />
-          Overview
-        </div>
-
-        <div
-          className="
-          flex items-center gap-3
-          bg-blue-100 dark:bg-blue-900/30
-          text-blue-600 dark:text-blue-400
-          p-2 rounded-lg
-        "
-        >
-          <Bell size={18} />
-          Alerts
-        </div>
-
-        <div
-          className="
-          flex items-center gap-3 cursor-pointer
-          text-gray-600 dark:text-gray-400
-          hover:text-blue-600 dark:hover:text-blue-400
-          transition
-        "
-        >
-          <Settings size={18} />
-          Settings
-        </div>
+      <nav className="mt-6 flex-1 px-4 space-y-2">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                isActive 
+                  ? "bg-blue-600 text-white" 
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+              }`}
+            >
+              <item.icon size={20} />
+              <span className="font-medium">{item.name}</span>
+            </Link>
+          );
+        })}
       </nav>
+
+      <div className="p-4 bg-slate-800 m-4 rounded-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-xs text-slate-300 uppercase font-bold">System Live</span>
+        </div>
+        <p className="text-[10px] text-slate-500 italic">
+          Monitoring logs across 3 services (Auth, Payment, Order)
+        </p>
+      </div>
     </div>
   );
 }
