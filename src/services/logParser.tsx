@@ -1,26 +1,36 @@
 import { Log } from "../context/LogContext";
 
 export function parseLogs(text: string): Log[] {
+  const lines = text.split("\n");
+
+  const logs: Log[] = [];
 
   const regex =
-    /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+(INFO|WARN|ERROR|DEBUG)\s+\d+\s+---.*?\]\s+([\w\.]+)\s+:\s+(.*)$/;
+    /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+(\w+)\s+\d+\s+---\s+\[.*?\]\s+([\w\.]+)\s+:\s+(.*)$/;
 
-  return text
-    .split("\n")
-    .map(line => {
+  for (const line of lines) {
+    const match = line.match(regex);
 
-      const match = line.match(regex);
+    if (!match) continue;
 
-      if (!match) return null;
+    const timestamp = new Date(match[1]);
 
-      return {
-        timestamp: new Date(match[1]),
-        level: match[2],
-        service: match[3].split(".").pop() || "",
-        message: match[4]
-      };
+    const level = match[2];
 
-    })
-    .filter((log): log is Log => log !== null);
+    const fullService = match[3];
 
+    const service =
+      fullService.split(".").pop() || fullService;
+
+    const message = match[4];
+
+    logs.push({
+      timestamp,
+      level,
+      service,
+      message,
+    });
+  }
+
+  return logs;
 }
