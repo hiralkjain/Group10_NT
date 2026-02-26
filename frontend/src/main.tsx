@@ -3,14 +3,23 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
-import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeProvider } from './context/ThemeContext'
+import { AuthProvider } from './context/AuthContext'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/* Add the future prop here to silence v7 warnings */}
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <ThemeProvider>
-      <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
-  </React.StrictMode>
-)
+  </React.StrictMode>,
+);
