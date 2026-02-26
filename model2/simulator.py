@@ -14,7 +14,7 @@ try:
     while True:
         # Simulate normal traffic
         write_log("INFO", "Normal system heartbeat")
-        time.sleep(1) 
+        time.sleep(10) 
         
         # Every 10 seconds, maybe inject an error for testing
         if random.random() > 0.8:

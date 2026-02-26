@@ -62,7 +62,7 @@ class LogManager:
             print(f"❌ Ingestion Error: {e}")
 
     def _train_ml_model(self):
-        features = self.df.resample('10s', on='timestamp').agg({
+        features = self.df.resample('50s', on='timestamp').agg({
             'message': 'count',
             'level': lambda x: (x == 'ERROR').sum()
         }).rename(columns={'message': 'vol', 'level': 'err'}).fillna(0)
@@ -74,6 +74,17 @@ class LogManager:
 
 log_store = LogManager("app.log")
 
+@app.get("/raw-logs")
+def get_raw_logs():
+    """Forces a refresh and returns the latest logs as a list."""
+    # Update the data from the file before returning
+    log_store.update_data()
+    
+    if log_store.df.empty:
+        return [] # Return empty list, not a 404 or null
+        
+    # Send only the last 50 entries to keep it fast
+    return log_store.df.tail(50).to_dict(orient="records")
 @app.get("/alerts")
 def get_alerts():
     log_store.update_data()
