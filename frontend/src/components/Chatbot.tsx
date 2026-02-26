@@ -94,7 +94,7 @@ const Chatbot = () => {
                         className={`max-w-[75%] px-4 py-2 rounded-xl text-sm ${
                           msg.role === "user"
                             ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-800 border"
+                            : "bg-white border shadow-sm text-gray-800"
                         }`}
                       >
                         {formatAIMessage(msg.content)}
@@ -103,7 +103,7 @@ const Chatbot = () => {
                   ))}
 
                   {loading && (
-                    <div className="text-blue-600 animate-pulse text-sm">
+                    <div className="text-gray-700 animate-pulse text-sm">
                       Thinking...
                     </div>
                   )}
@@ -148,25 +148,43 @@ function formatAIMessage(text: string) {
   const lines = text.split("\n")
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4 text-sm leading-relaxed">
+
       {lines.map((line, i) => {
-        if (line.includes("ERROR") || line.includes("Failed")) {
+
+        if (line.trim().endsWith(":")) {
           return (
-            <div key={i} className="text-red-600 font-medium">
+            <div key={i} className="text-gray-700 font-semibold text-base mt-3">
               {line}
             </div>
           )
         }
 
-        if (line.includes("WARNING")) {
+        if (line.trim().startsWith("-")) {
           return (
-            <div key={i} className="text-yellow-600 font-medium">
+            <div key={i} className="ml-4 text-gray-700">
+              • {line.replace("-", "").trim()}
+            </div>
+          )
+        }
+
+        if (
+          line.toLowerCase().includes("error") ||
+          line.toLowerCase().includes("failed") ||
+          line.toLowerCase().includes("denied")
+        ) {
+          return (
+            <div key={i} className="text-gray-700 font-medium">
               {line}
             </div>
           )
         }
 
-        return <div key={i}>{line}</div>
+        return (
+          <div key={i} className="text-gray-800">
+            {line}
+          </div>
+        )
       })}
     </div>
   )
