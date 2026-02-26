@@ -65,7 +65,7 @@ const Chatbot = () => {
                 <div className="flex-1 p-4 overflow-y-auto space-y-4">
 
                   {loading && (
-                    <div className="text-blue-600 animate-pulse">
+                    <div className="bg-blue-600 animate-pulse">
                       Analyzing logs...
                     </div>
                   )}
