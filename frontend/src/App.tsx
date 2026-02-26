@@ -7,6 +7,7 @@ import AlertsTable from "./components/AlertsTable";
 // import AlertsCenter from "./pages/AlertsCenter";
 import { LogProvider } from "./context/LogContext";
 import AlertsCenter from "./pages/AlertDashboard";
+import LogExplorer from "./pages/LogExplorer";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/filters" element={<LogFiltersPage />} />
           <Route path="/alerts" element={<AlertsTable />} />
+          <Route path="/logs" element={<LogExplorer />} />
           {/* Requirement #4: Displaying alerts and why they fired */}
           <Route path="/alerts-dashboard" element={<AlertsCenter />} />
         </Routes>
