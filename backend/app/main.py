@@ -3,10 +3,19 @@ from app.loader import load_logs
 from app.storage import logs_storage
 from app.models import LogFilterRequest
 from app.filters import apply_filters
+from app.aggregation import aggregate_by_level, aggregate_by_service
+from fastapi.middleware.cors import CORSMiddleware
 from app.aggregation import aggregate_by_level, aggregate_by_logger
 
 app = FastAPI(title="Log Monitoring System")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 def startup_event():
@@ -26,7 +35,7 @@ def filter_logs(filter_req: LogFilterRequest):
         "total_logs": len(logs_storage),
         "matched_logs": len(filtered),
         "level_distribution": aggregate_by_level(filtered),
-        "logger_distribution": aggregate_by_logger(filtered),
+        "service_distribution": aggregate_by_service(filtered),
         "results": filtered
     }
 

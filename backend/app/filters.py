@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import re
+from warnings import filters
 from app.models import LogFilterRequest
 
 
@@ -13,12 +14,12 @@ def apply_filters(logs, filter_req: LogFilterRequest):
             if log["level"] in filter_req.levels
         ]
 
-    # Filter by logger name
-    if filter_req.logger_contains:
+    # Filter by service name
+    if filter_req.service_contains:
         result = [
             log for log in result
-            if filter_req.logger_contains.lower()
-            in log["logger"].lower()
+            if filter_req.service_contains.lower()
+            in log["service"].lower()
         ]
 
     # Keyword search
@@ -28,6 +29,7 @@ def apply_filters(logs, filter_req: LogFilterRequest):
             if filter_req.message_keyword.lower()
             in log["message"].lower()
         ]
+
     # Regex search
     if filter_req.regex:
         pattern = re.compile(filter_req.regex, re.IGNORECASE)
@@ -36,11 +38,11 @@ def apply_filters(logs, filter_req: LogFilterRequest):
             if pattern.search(log["message"])
         ]
 
-    # Time range
+    # Time range (IMPORTANT: timestamp is now string → convert)
     if filter_req.from_time and filter_req.to_time:
         result = [
             log for log in result
-            if filter_req.from_time <= log["timestamp"] <= filter_req.to_time
+            if filter_req.from_time <= datetime.fromisoformat(log["timestamp"]) <= filter_req.to_time
         ]
 
     # Last X minutes
@@ -50,8 +52,14 @@ def apply_filters(logs, filter_req: LogFilterRequest):
         )
         result = [
             log for log in result
-            if log["timestamp"] >= cutoff
+            if datetime.fromisoformat(log["timestamp"]) >= cutoff
         ]
 
+    if filter_req.start_datetime:
+        result = [log for log in result if log["timestamp"] >= filter_req.start_datetime]
 
+    if filter_req.end_datetime:
+        result = [log for log in result if log["timestamp"] <= filter_req.end_datetime]
+
+        
     return result

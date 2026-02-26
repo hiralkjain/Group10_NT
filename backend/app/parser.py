@@ -23,6 +23,6 @@ def parse_log_line(line: str):
         "level": data["level"],
         "pid": int(data["pid"]),
         "thread": data["thread"],
-        "logger": data["logger"],
+        "service": data["logger"],   
         "message": data["message"],
     }
