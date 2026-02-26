@@ -1,23 +1,36 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import LogFiltersPage from "./pages/LogFiltersPage";
-// You will need to create these components based on the Problem Statement
 import AlertsCenter from "./pages/AlertDashboard"; 
+import UserManagementPage from "./pages/UserManagement";
+import Login from "./pages/auth/Login";
 import { LogProvider } from "./context/LogContext"; 
+import { AuthProvider, useAuth } from "./context/AuthContext"; 
+
+// A wrapper to protect routes
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  return <Layout>{children}</Layout>;
+};
 
 function App() {
   return (
-    <LogProvider>
-      <Layout>
+    <AuthProvider>
+      <LogProvider>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/filters" element={<LogFiltersPage />} />
-          {/* Requirement #4: Displaying alerts and why they fired */}
-          <Route path="/alerts" element={<AlertsCenter />} />
+          <Route path="/login" element={<Login />} />
+          
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/filters" element={<ProtectedRoute><LogFiltersPage /></ProtectedRoute>} />
+          <Route path="/alerts" element={<ProtectedRoute><AlertsCenter /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute><UserManagementPage /></ProtectedRoute>} />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </Layout>
-    </LogProvider>
+      </LogProvider>
+    </AuthProvider>
   );
 }
 

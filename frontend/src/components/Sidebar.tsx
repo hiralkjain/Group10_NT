@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -9,36 +10,45 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Sun, 
-  Moon 
+  Moon,
+  Users,
+  CheckCircle2,
+  LogOut
 } from "lucide-react";
-
-const menuItems = [
-  { name: "Dashboard", path: "/", icon: LayoutDashboard },
-  { name: "Log Explorer", path: "/filters", icon: FileText },
-  { name: "Alerts Center", path: "/alerts", icon: Bell },
-  { name: "Alert Rules", path: "/rules", icon: Settings },
-];
 
 export default function Sidebar() {
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [theme, setTheme] = useState("dark"); // Defaulting to dark
+  const [theme, setTheme] = useState("dark");
+
+  const isAdmin = user?.role === "ADMIN";
+
+  // Dynamic Menu Items based on Role (Requirement: Admin sees extra management tabs)
+  const menuItems = [
+    { name: "Dashboard", path: "/", icon: LayoutDashboard },
+    { name: "Log Explorer", path: "/filters", icon: FileText },
+    { name: "Alerts Center", path: "/alerts", icon: Bell },
+    // Admin Only Tabs
+    ...(isAdmin ? [
+      { name: "User Management", path: "/users", icon: Users },
+      { name: "Resolution Hub", path: "/resolutions", icon: CheckCircle2 },
+    ] : []),
+    { name: "Alert Rules", path: "/rules", icon: Settings },
+  ];
 
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+  
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
-    // Logic to update the HTML tag for global Tailwind dark mode
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    // Toggles the 'dark' class on the <html> element for Tailwind dark mode
+    document.documentElement.classList.toggle("dark");
   };
 
   return (
     <div 
-      className={`relative flex flex-col transition-all duration-300 ease-in-out border-r ${
+      className={`relative flex flex-col transition-all duration-300 ease-in-out border-r z-50 ${
         isCollapsed ? "w-20" : "w-64"
       } h-screen shadow-xl ${
         theme === "dark" 
@@ -58,20 +68,23 @@ export default function Sidebar() {
         {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
 
-      {/* Header / Logo */}
+      {/* Header / Logo Section */}
       <div className={`p-6 flex items-center gap-3 border-b overflow-hidden whitespace-nowrap ${
         theme === "dark" ? "border-white/5" : "border-slate-100"
       }`}>
         <Activity className="text-blue-500 shrink-0" />
         {!isCollapsed && (
-          <span className="text-xl font-black tracking-tight animate-in fade-in duration-500">
-            Logs
-          </span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tighter italic">LOGS</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+              Sentinel
+            </span>
+          </div>
         )}
       </div>
 
-      {/* Navigation */}
-      <nav className="mt-6 flex-1 px-3 space-y-2">
+      {/* Navigation Links */}
+      <nav className="mt-6 flex-1 px-3 space-y-2 overflow-y-auto custom-scrollbar">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -98,38 +111,55 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Footer Actions */}
+      {/* Footer Actions / Profile Section */}
       <div className={`p-4 border-t space-y-4 ${
         theme === "dark" ? "border-white/5" : "border-slate-100"
       }`}>
+        {/* Role-Aware Context Indicator */}
         {!isCollapsed && (
           <div className={`p-3 rounded-xl animate-in fade-in zoom-in-95 duration-300 ${
             theme === "dark" ? "bg-white/5" : "bg-slate-50"
           }`}>
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className={`text-[10px] uppercase font-black ${
+              <div className={`w-2 h-2 rounded-full animate-pulse ${isAdmin ? 'bg-blue-500' : 'bg-green-500'}`}></div>
+              <span className={`text-[10px] uppercase font-black tracking-tighter ${
                 theme === "dark" ? "text-slate-300" : "text-slate-500"
-              }`}>System Live</span>
+              }`}>
+                {isAdmin ? "Master Admin" : user?.department}
+              </span>
             </div>
             <p className="text-[9px] text-slate-500 leading-tight">
-              Monitoring 3 core services
+              {isAdmin 
+                ? "Full Infrastructure Oversight" 
+                : `Monitoring ${user?.filters?.keywords?.length || 0} departmental patterns`}
             </p>
           </div>
         )}
 
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className={`w-full flex items-center justify-center gap-3 p-3 rounded-xl transition-all ${
-            theme === "dark" 
-              ? "bg-white/10 text-yellow-400 hover:bg-white/20" 
-              : "bg-slate-900 text-white hover:bg-slate-800"
-          }`}
-        >
-          {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-          {!isCollapsed && <span className="text-xs font-bold uppercase tracking-wider">Mode</span>}
-        </button>
+        {/* Global Action Buttons */}
+        <div className="flex flex-col gap-2">
+            {/* Dark/Light Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              className={`w-full flex items-center justify-center gap-3 p-3 rounded-xl transition-all ${
+                theme === "dark" 
+                  ? "bg-white/10 text-yellow-400 hover:bg-white/20" 
+                  : "bg-slate-900 text-white hover:bg-slate-800"
+              }`}
+            >
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+              {!isCollapsed && <span className="text-xs font-bold uppercase tracking-wider">Appearance</span>}
+            </button>
+
+            {/* Logout Trigger */}
+            <button
+              onClick={logout}
+              className={`w-full flex items-center justify-center gap-3 p-3 rounded-xl transition-all text-red-500 hover:bg-red-500/10 active:scale-95`}
+            >
+              <LogOut size={18} />
+              {!isCollapsed && <span className="text-xs font-bold uppercase tracking-wider">Logout</span>}
+            </button>
+        </div>
       </div>
     </div>
   );
