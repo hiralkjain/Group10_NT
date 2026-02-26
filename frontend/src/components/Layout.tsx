@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "./Sidebar";
+import Chatbot from "./Chatbot";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,9 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </div>
       </main>
+
+      {/* ADD THIS */}
+      <Chatbot />
     </div>
   );
 }
