@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import re
+from warnings import filters
 from app.models import LogFilterRequest
 
 
@@ -54,4 +55,11 @@ def apply_filters(logs, filter_req: LogFilterRequest):
             if datetime.fromisoformat(log["timestamp"]) >= cutoff
         ]
 
+    if filter_req.start_datetime:
+        result = [log for log in result if log["timestamp"] >= filter_req.start_datetime]
+
+    if filter_req.end_datetime:
+        result = [log for log in result if log["timestamp"] <= filter_req.end_datetime]
+
+        
     return result
