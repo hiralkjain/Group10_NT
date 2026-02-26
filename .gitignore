@@ -17,3 +17,10 @@ playground-temp
 temp
 TODOs.md
 .eslintcache
+
+backend/venv/
+backend/__pycache__/
+backend/.env
+
+frontend/node_modules/
+frontend/dist/
