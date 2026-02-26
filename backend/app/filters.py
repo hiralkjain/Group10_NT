@@ -15,7 +15,7 @@ def apply_filters(logs, filter_req: LogFilterRequest):
         ]
 
     # Filter by service name
-    if filter_req.service_contains:
+    if filter_req.logger_contains:
         result = [
             log for log in result
             if filter_req.service_contains.lower()
@@ -56,10 +56,16 @@ def apply_filters(logs, filter_req: LogFilterRequest):
         ]
 
     if filter_req.start_datetime:
-        result = [log for log in result if log["timestamp"] >= filter_req.start_datetime]
+      result = [
+        log for log in result
+        if datetime.fromisoformat(log["timestamp"]) >= filter_req.start_datetime
+    ]
 
     if filter_req.end_datetime:
-        result = [log for log in result if log["timestamp"] <= filter_req.end_datetime]
+      result = [
+        log for log in result
+        if datetime.fromisoformat(log["timestamp"]) <= filter_req.end_datetime
+    ]
 
         
     return result

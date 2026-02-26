@@ -5,7 +5,6 @@ from app.models import LogFilterRequest
 from app.filters import apply_filters
 from app.aggregation import aggregate_by_level, aggregate_by_service
 from fastapi.middleware.cors import CORSMiddleware
-from app.aggregation import aggregate_by_level, aggregate_by_logger
 
 app = FastAPI(title="Log Monitoring System")
 
